@@ -1,4 +1,5 @@
-import configparser, os, argparse, getpass, ImageSearch
+import configparser, os, argparse, getpass, ImageSearch, urllib
+from PIL import Image
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 CONFIG_PATH = os.path.join(PATH,"config")
@@ -79,15 +80,48 @@ def CX():
             update_cx()
     return API_CX
 
+def wget_image(url:str):
+    if isinstance(url,str):
+        r = urllib.request.urlopen(url)
+        return Image.open(r)
+    else:
+        raise TypeError(f"url should be type str, not type {type(url)}")
+
+def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
+    if not isinstance(searcher,ImageSearch.ImageSearch):
+        raise TypeError(f"searcher should be type ImageSearch, not type {type(searcher)}")
+    if not isinstance(query,str):
+        raise TypeError(f"query should be type str, not type {type(query)}")
+    img = None
+    i = 0
+    while img == None and i < 5: # don't perform more than 5 searches
+        n = (i*10) + 1
+        results = searcher.search(query,start=n)
+        for result in results: # loop through results and try to find a valid one
+            try:
+                url = result['link']
+                img = wget_image(url)
+            except:
+                continue
+            else:
+                break
+        i += 1
+
+    if img == None:
+        raise RuntimeError("Could not find valid image in less than fifty results.")
+    else:
+        return img
+
 def main(args:argparse.Namespace):
     if not os.path.isdir(OUT_PATH): # if .././out doesn't exist, make it
         os.makedirs(OUT_PATH)
     if(args.update_key): # if the users wants to update their key, let them
         update_key()
         update_cx()
+    # create our searcher
     searcher = ImageSearch.ImageSearch(KEY(),CX())
-
-
+    img = wget_best_image(searcher,"Great cubicuboctahedron")
+    img.show()
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
