@@ -1,4 +1,4 @@
-import configparser, os
+import configparser, os, argparse, getpass
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 CONFIG_PATH = os.path.join(PATH,"config")
@@ -12,7 +12,10 @@ def get_users_key():
     print("Please enter your Google Custom Search JSON API Key.")
     print("You can generate one at\n\thttps://developers.google.com/custom-search/v1/overview")
     print("Please do not share this key with anyone.")
-    return input("Your key: ")
+    inp = getpass.getpass("Your key: ")
+    print("=============================")
+    print()
+    return inp
 
 def update_key():
     global API_KEY
@@ -32,8 +35,13 @@ def KEY():
             update_key()
     return API_KEY
 
-def main():
-    print(KEY())
+def main(args:argparse.Namespace):
+    if(args.update_key):
+        update_key()
+    
 
 if __name__=="__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
+    parser.add_argument('-u','--update_key',default=False,action='store_true')
+    args = parser.parse_args()
+    main(args)
