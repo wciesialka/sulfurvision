@@ -1,4 +1,4 @@
-import configparser, os, argparse, getpass, ImageSearch, urllib
+import configparser, os, argparse, getpass, ImageSearch, urllib, TheMaker
 from PIL import Image
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -113,15 +113,22 @@ def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
         return img
 
 def main(args:argparse.Namespace):
-    if not os.path.isdir(OUT_PATH): # if .././out doesn't exist, make it
-        os.makedirs(OUT_PATH)
     if(args.update_key): # if the users wants to update their key, let them
         update_key()
         update_cx()
+    
+    query = "Great cubicuboctahedron"
     # create our searcher
     searcher = ImageSearch.ImageSearch(KEY(),CX())
-    img = wget_best_image(searcher,"Great cubicuboctahedron")
-    img.show()
+    img = wget_best_image(searcher,query)
+    
+    maker = TheMaker.TheMaker(img,query)
+    maker.overlay_image()
+    maker.overlay_text()
+
+    if not os.path.isdir(OUT_PATH): # if .././out doesn't exist, make it
+        os.makedirs(OUT_PATH)
+    maker.save(os.path.join(OUT_PATH,".".join((query,"jpg"))))
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
