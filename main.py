@@ -3,6 +3,7 @@ import configparser, os, argparse, getpass
 PATH = os.path.abspath(os.path.dirname(__file__))
 CONFIG_PATH = os.path.join(PATH,"config")
 CONFIG_FILE = os.path.join(CONFIG_PATH,"the_generator_config.ini")
+BASE_IMAGE_PATH = os.path.join(PATH,"data","base.jpg")
 KEY_CONFIG_KEY = "GoogleCustomSearchJSONAPIKey"
 CONFIG = configparser.ConfigParser()
 API_KEY = None
@@ -39,9 +40,10 @@ def main(args:argparse.Namespace):
     if(args.update_key):
         update_key()
     
+    
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
-    parser.add_argument('-u','--update_key',default=False,action='store_true')
+    parser.add_argument('-u','--update_key',default=False,action='store_true',help="Start with a prompt to update the user's API key.")
     args = parser.parse_args()
     main(args)
