@@ -19,9 +19,9 @@ class ImageSearch:
         q = html.escape(q)
         q = ImageSearch.WHITESPACE_REGEX.sub("+",q)
 
-        params = {'key': self.key, "cx": self.cx, "q": q}
+        params = {'key': self.key, "cx": self.cx, "q": q, "searchType": 'image', 'safe': 'off'}
         r = requests.get(url=ImageSearch.URL,params=params)
 
         data = r.json()
 
-        return data
+        return data['items']
