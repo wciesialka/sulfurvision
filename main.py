@@ -49,6 +49,7 @@ def get_users_cx():
     print("=============================")
     print("Please enter your Google Custom Search Engine CX.")
     print("You can generate one at\n\thttps://cse.google.com/cse/all")
+    print("Make sure that you have Image Search and Search the Entire Web on.")
     print("Please do not share this with anyone.")
     inp = getpass.getpass("Your CX: ") # use getpass so that the input is hidden
     print("=============================")
@@ -78,7 +79,6 @@ def CX():
             update_cx()
     return API_CX
 
-
 def main(args:argparse.Namespace):
     if not os.path.isdir(OUT_PATH): # if .././out doesn't exist, make it
         os.makedirs(OUT_PATH)
@@ -87,8 +87,7 @@ def main(args:argparse.Namespace):
         update_cx()
     searcher = ImageSearch.ImageSearch(KEY(),CX())
 
-    result = searcher.search("Sample Text")
-    print(result)
+
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
