@@ -1,4 +1,4 @@
-import configparser, os, argparse, getpass, ImageSearch, urllib, TheMaker
+import configparser, os, argparse, getpass, ImageSearch, urllib, TheMaker, sys
 from PIL import Image
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -135,7 +135,12 @@ def main(args:argparse.Namespace):
     else:
         out = open(os.path.join(OUT_PATH,".".join((basename,"jpg"))),'wb')
     
-    maker.save(out)
+    try:
+        maker.save(out)
+    except:
+        print("Unexpected error while saving file:", sys.exc_info()[0])
+    finally:
+        out.close()
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
