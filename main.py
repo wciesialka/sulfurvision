@@ -137,8 +137,11 @@ def main(args:argparse.Namespace):
     
     try:
         maker.save(out)
-    except:
+    except Exception as ex:
         print("Unexpected error while saving file:", sys.exc_info()[0])
+        print("\t",ex)
+        if(isinstance(ex,ValueError)):
+            print("Make sure your file has an extension.")
     finally:
         out.close()
 
