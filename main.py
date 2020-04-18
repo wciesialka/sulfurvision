@@ -116,22 +116,31 @@ def main(args:argparse.Namespace):
     if(args.update_key): # if the users wants to update their key, let them
         update_key()
         update_cx()
-    
-    query = "Great cubicuboctahedron"
+
+    query = args.query
     # create our searcher
     searcher = ImageSearch.ImageSearch(KEY(),CX())
     img = wget_best_image(searcher,query)
     
-    maker = TheMaker.TheMaker(img,query)
+    maker = TheMaker.TheMaker(img,query.upper())
     maker.overlay_image()
     maker.overlay_text()
 
     if not os.path.isdir(OUT_PATH): # if .././out doesn't exist, make it
         os.makedirs(OUT_PATH)
-    maker.save(os.path.join(OUT_PATH,".".join((query,"jpg"))))
+    basename = " ".join(("the",query))
+
+    if(args.output):
+        out = args.output
+    else:
+        out = open(os.path.join(OUT_PATH,".".join((basename,"jpg"))),'wb')
+    
+    maker.save(out)
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
     parser.add_argument('-u','--update_key',default=False,action='store_true',help="Start with a prompt to update the user's API key.")
+    parser.add_argument('-o','--output',type=argparse.FileType('wb'),help="Output file.")
+    parser.add_argument('query',help='Search query.',type=str)
     args = parser.parse_args()
     main(args)

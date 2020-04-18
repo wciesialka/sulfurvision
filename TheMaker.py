@@ -9,7 +9,7 @@ DATA = os.path.join(PATH,"data")
 class TheMaker:
 
     # boxes use format x, y, dx, dy
-    TEXTBOX = (209,7,465,119)
+    TEXTBOX = (209,9,465,111)
     IMAGEBOX = (26, 344, 200, 200)
     BASE_PATH = os.path.join(DATA,"base.jpg")
     
@@ -28,7 +28,7 @@ class TheMaker:
 
     def overlay_text(self):
         fpath = os.path.join(DATA,"impact.ttf")
-        smax = 72 # max size
+        smax = 144 # max size
         smin = 36 # min size
         fsize = smax+1
         size = None
@@ -40,13 +40,18 @@ class TheMaker:
             size = font.getsize(self.text)
             w = size[0]
             h = size[1]
-        x = TheMaker.TEXTBOX[0]
+        x = TheMaker.TEXTBOX[0] + (TheMaker.TEXTBOX[2]-w)/2
         y = TheMaker.TEXTBOX[1] + (TheMaker.TEXTBOX[3]-h)/2
-        self.draw_text(x,y,font,border_size=4)
+        self.draw_text(x,y,font)
 
-    def draw_text(self,x:int,y:int,font:ImageFont.truetype,border_size:int=1):
+    def draw_text(self,x:int,y:int,font:ImageFont.truetype):
         draw = ImageDraw.Draw(self.img)
-        for i in range(border_size):
+        border_size = max(1,font.size//12)
+        for i in range(1,border_size):
+            draw.text((x-i, y), self.text, font=font, fill="black")
+            draw.text((x+i, y), self.text, font=font, fill="black")
+            draw.text((x, y+i), self.text, font=font, fill="black")
+            draw.text((x, y-i), self.text, font=font, fill="black")
             draw.text((x-i, y-i), self.text, font=font, fill="black")
             draw.text((x+i, y-i), self.text, font=font, fill="black")
             draw.text((x-i, y+i), self.text, font=font, fill="black")
@@ -56,5 +61,5 @@ class TheMaker:
     def show(self):
         self.img.show()
 
-    def save(self,path:str):
-        self.img.save(path)
+    def save(self,out):
+        self.img.save(out)
