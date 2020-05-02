@@ -68,12 +68,16 @@ class TheMaker:
             w = size[0]
             h = size[1]
         wrapped_text = self.wordwrap(self.text)
-        for i,segment in enumerate(wrapped_text):
-            print(segment)
-            seg_size = self.font.getsize(segment)
-            x = TheMaker.TEXTBOX[0] + (TheMaker.TEXTBOX[2]-seg_size[0])/2
-            y = TheMaker.TEXTBOX[1]# + (TheMaker.TEXTBOX[3]-seg_size[1])/2
-            self.draw_text(x,y + (h*i),segment)
+        if len(wrapped_text) > 1:
+            for i,segment in enumerate(wrapped_text):
+                seg_size = self.font.getsize(segment)
+                x = TheMaker.TEXTBOX[0] + (TheMaker.TEXTBOX[2]-seg_size[0])/2
+                y = TheMaker.TEXTBOX[1]# + (TheMaker.TEXTBOX[3]-seg_size[1])/2
+                self.draw_text(x,y + (h*i),segment)
+        else:
+            x = TheMaker.TEXTBOX[0] + (TheMaker.TEXTBOX[2]-w)/2
+            y = TheMaker.TEXTBOX[1] + (TheMaker.TEXTBOX[3]-h)/2
+            self.draw_text(x,y,self.text)
 
     def draw_text(self,x:int,y:int,text:str):
         draw = ImageDraw.Draw(self.img)
