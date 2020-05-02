@@ -96,15 +96,22 @@ def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
     i = 0
     while img == None and i < 5: # don't perform more than 5 searches
         n = (i*10) + 1
-        results = searcher.search(query,start=n)
-        for result in results: # loop through results and try to find a valid one
-            try:
-                url = result['link']
-                img = wget_image(url)
-            except:
-                continue
-            else:
-                break
+        try:
+            results = searcher.search(query,start=n)
+        except ImageSearch.UnsuccessfulRequest as ex:
+            print("Error while retrieving image results:\n\t",ex)
+            if(ex.response_code == 400):
+                print("Are your API Key and CX correct?")
+            exit()
+        else:
+            for result in results: # loop through results and try to find a valid one
+                try:
+                    url = result['link']
+                    img = wget_image(url)
+                except:
+                    continue
+                else:
+                    break
         i += 1
 
     if img == None:
@@ -117,9 +124,19 @@ def main(args:argparse.Namespace):
         update_key()
         update_cx()
 
+    if args.cx:
+        cx = args.cx
+    else:  
+        cx = CX()
+    
+    if args.key:
+        key = args.key
+    else:
+        key = KEY()
+
     query = args.query
     # create our searcher
-    searcher = ImageSearch.ImageSearch(KEY(),CX())
+    searcher = ImageSearch.ImageSearch(key,cx)
     img = wget_best_image(searcher,query)
     
     maker = TheMaker.TheMaker(img,query.upper())
@@ -149,6 +166,8 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
     parser.add_argument('-u','--update_key',default=False,action='store_true',help="Start with a prompt to update the user's API key.")
     parser.add_argument('-o','--output',type=argparse.FileType('wb'),help="Output file.")
+    parser.add_argument('-k','--key',type=str,help="Force use provided API key.")
+    parser.add_argument('-c','--cx',type=str,help="Force use provided CX.")
     parser.add_argument('query',help='Search query.',type=str)
     args = parser.parse_args()
     main(args)

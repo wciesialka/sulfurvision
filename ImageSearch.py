@@ -1,5 +1,13 @@
 import html, re, requests
 
+class UnsuccessfulRequest(Exception):
+    def __init__(self,response_code:int):
+        self.response_code = response_code
+        self.message = f"Invalid request: returned status code {self.response_code}"
+    
+    def __str__(self):
+        return self.message
+
 class ImageSearch:
 
     WHITESPACE_REGEX = re.compile(r"\s+",re.MULTILINE)
@@ -26,7 +34,9 @@ class ImageSearch:
 
         params = {'key': self.key, "cx": self.cx, "q": q, "searchType": 'image', start: start}
         r = requests.get(url=ImageSearch.URL,params=params)
+        if r.status_code == 200:
+            data = r.json()
 
-        data = r.json()
-
-        return data['items']
+            return data['items']
+        else:
+            raise UnsuccessfulRequest(r.status_code)
