@@ -27,7 +27,8 @@ options:
 ```
 
 Note that query is a string and may require you to surround it in quotations, especially if it contains spaces.
-If no output file is given, the file will be output into a folder on the same directory as `main.py` titled `out` and will be given a name with the pattern `the (query).jpg`. 
+
+If no output file is given, the file will be output with the pattern `out/the (query).jpg`, with `out` being created on the same level as `main.py` if not already existing. 
 
 ## License
 
