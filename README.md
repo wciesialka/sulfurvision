@@ -19,7 +19,8 @@ To use this program, you must have generated a [Google Custom Search Engine](htt
 
 Run from the command line using:
 
-```python main.py [options] query
+```
+python main.py [options] query
 options:
     -u, --update_key        Update your Google Custom Search API key and CX
     -o, --output            Output file
