@@ -22,8 +22,10 @@ Run from the command line using:
 ```
 python main.py [options] query
 options:
-    -u, --update_key        Update your Google Custom Search API key and CX
-    -o, --output            Output file
+    -u, --update_key        Begin with a prompt to update your Google Custom Search API key and CX
+    -o, --output            Path to output file
+    -k, --key               Forces use of a provided Google Custom Search API key
+    -c, --cx                Forces use of a provided Google Custom Search CX
 ```
 
 Note that query is a string and may require you to surround it in quotations, especially if it contains spaces.
