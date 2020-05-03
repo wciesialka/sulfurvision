@@ -147,20 +147,31 @@ def main(args:argparse.Namespace):
         os.makedirs(OUT_PATH)
     basename = " ".join(("the",query))
 
+    saveToOut = True    
+
     if(args.output):
         out = args.output
     else:
-        out = open(os.path.join(OUT_PATH,".".join((basename,"jpg"))),'wb')
+        if args.pipe:
+            saveToOut = False
+        else:
+            out = open(os.path.join(OUT_PATH,".".join((basename,"jpg"))),'wb')
     
     try:
-        maker.save(out)
+        if saveToOut:
+            maker.save(out)
+        if args.pipe:
+            with os.fdopen(sys.stdout.fileno(), "wb", closefd=False) as stdout:
+                stdout.write(maker.as_bytes())
+                stdout.flush()
     except Exception as ex:
         print("Unexpected error while saving file:", sys.exc_info()[0])
         print("\t",ex)
         if(isinstance(ex,ValueError)):
             print("Make sure your file has an extension.")
     finally:
-        out.close()
+        if saveToOut:
+            out.close()
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Generate a \"THE\" image.")
@@ -168,6 +179,7 @@ if __name__=="__main__":
     parser.add_argument('-o','--output',type=argparse.FileType('wb'),help="Output file.")
     parser.add_argument('-k','--key',type=str,help="Force use provided API key.")
     parser.add_argument('-c','--cx',type=str,help="Force use provided CX.")
+    parser.add_argument('-p','--pipe',action='store_true',default=False,help="Output binary data of image to STDOUT.")
     parser.add_argument('query',help='Search query.',type=str)
     args = parser.parse_args()
     main(args)

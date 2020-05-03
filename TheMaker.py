@@ -1,7 +1,7 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-import os
+import os, io
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 DATA = os.path.join(PATH,"data")
@@ -55,7 +55,7 @@ class TheMaker:
 
     def overlay_text(self):
         fpath = os.path.join(DATA,"impact.ttf")
-        smax = 144 # max size
+        smax = 121 # max size
         smin = 36 # min size
         fsize = smax+1
         size = None
@@ -98,3 +98,10 @@ class TheMaker:
 
     def save(self,out):
         self.img.save(out)
+
+    def as_bytes(self):
+        b = None
+        with io.BytesIO() as buf:
+            self.img.save(buf,"JPEG")
+            b = buf.getvalue()
+        return b
