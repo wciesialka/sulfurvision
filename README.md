@@ -22,15 +22,16 @@ Run from the command line using:
 ```
 python main.py [options] query
 options:
-    -u, --update_key        Begin with a prompt to update your Google Custom Search API key and CX
-    -o, --output            Path to output file
-    -k, --key               Forces use of a provided Google Custom Search API key
-    -c, --cx                Forces use of a provided Google Custom Search CX
+    -u, --update_key        Begin with a prompt to update your Google Custom Search API key and CX.
+    -o, --output            Path to output file.
+    -k, --key               Forces use of a provided Google Custom Search API key.
+    -c, --cx                Forces use of a provided Google Custom Search CX.
+    -p, --pipe              Output raw bytes of image to STDOUT.
 ```
 
 Note that query is a string and may require you to surround it in quotations, especially if it contains spaces.
 
-If no output file is given, the file will be output with the pattern `out/the (query).jpg`, with `out` being created on the same level as `main.py` if not already existing. 
+If no `--output` option is given, the file will be output with the pattern `out/the (query).jpg`, with `out` being created on the same level as `main.py` if not already existing. This will not happen if the `--pipe` flag is set.
 
 ## License
 
