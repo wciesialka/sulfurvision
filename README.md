@@ -26,7 +26,7 @@ options:
     -o, --output            Path to output file.
     -k, --key               Forces use of a provided Google Custom Search API key.
     -c, --cx                Forces use of a provided Google Custom Search CX.
-    -p, --pipe              Output raw bytes of image to STDOUT.
+    -p, --pipe              Output raw bytes of image in JPEG format to STDOUT.
 ```
 
 Note that query is a string and may require you to surround it in quotations, especially if it contains spaces.
