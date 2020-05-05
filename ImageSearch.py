@@ -23,7 +23,10 @@ class ImageSearch:
 
     def search(self,query:str,start:int):
         if not isinstance(query,str):
-            raise TypeError(f"query should be type str, not {type(query)}")
+            try:
+                query = str(query)
+            except:
+                raise TypeError(f"query should be type str, not {type(query)}")
         if not isinstance(start,int):
             raise TypeError(f"start should be type int, not {type(start)}")
         if start < 1:
@@ -32,11 +35,14 @@ class ImageSearch:
         q = html.escape(q)
         q = ImageSearch.WHITESPACE_REGEX.sub("+",q)
 
-        params = {'key': self.key, "cx": self.cx, "q": q, "searchType": 'image', start: start}
-        r = requests.get(url=ImageSearch.URL,params=params)
-        if r.status_code == 200:
-            data = r.json()
-
-            return data['items']
+        if len(q) > 1840: # 1840 is roughly the length a query can be before the total request url is over 2000 characters
+            raise ValueError("Query must be less than or equal to 1840 characters in length.")
         else:
-            raise UnsuccessfulRequest(r.status_code)
+            params = {'key': self.key, "cx": self.cx, "q": q, "searchType": 'image', "start": start}
+            r = requests.get(url=ImageSearch.URL,params=params)
+            if r.status_code == 200:
+                data = r.json()
+
+                return data['items']
+            else:
+                raise UnsuccessfulRequest(r.status_code)
