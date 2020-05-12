@@ -100,9 +100,11 @@ def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
             results = searcher.search(query,start=n)
         except ImageSearch.UnsuccessfulRequest as ex:
             print("Error while retrieving image results:\n\t",ex)
-            if(ex.response_code == 400):
+            if(ex.status_code == 400):
                 print("Are your API Key and CX correct?")
-            exit()
+            elif(ex.status_code == 429):
+                print("Your API Usage Quota has been met.")
+            raise ex
         else:
             for result in results: # loop through results and try to find a valid one
                 try:
@@ -115,7 +117,7 @@ def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
         i += 1
 
     if img == None:
-        raise RuntimeError("Could not find valid image in less than fifty results.")
+        raise ImageSearch.QueryError("Could not find valid image in less than fifty results.")
     else:
         return img
 

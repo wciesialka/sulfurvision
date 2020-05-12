@@ -1,10 +1,18 @@
 import html, re, requests
 
 class UnsuccessfulRequest(Exception):
-    def __init__(self,response_code:int):
-        self.response_code = response_code
-        self.message = f"Invalid request: returned status code {self.response_code}"
+    def __init__(self,status_code:int):
+        self.status_code = status_code
+        self.message = f"Invalid request returned status code {self.status_code}"
     
+    def __str__(self):
+        return self.message
+
+class QueryError(Exception):
+    def __init__(self,description):
+        self.description = description
+        self.message = self.description
+
     def __str__(self):
         return self.message
 
@@ -36,7 +44,9 @@ class ImageSearch:
         q = ImageSearch.WHITESPACE_REGEX.sub("+",q)
 
         if len(q) > 1840: # 1840 is roughly the length a query can be before the total request url is over 2000 characters
-            raise ValueError("Query must be less than or equal to 1840 characters in length.")
+            raise QueryError("Query must be less than or equal to 1840 characters in length.")
+        elif len(q) == 0:
+            raise QueryError('Query should not be empty.')
         else:
             params = {'key': self.key, "cx": self.cx, "q": q, "searchType": 'image', "start": start}
             r = requests.get(url=ImageSearch.URL,params=params)
