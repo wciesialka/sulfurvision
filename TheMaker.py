@@ -30,8 +30,9 @@ class TheMaker:
         self.font = None
 
     def overlay_image(self):
-        new_image = self.overlay.resize((TheMaker.IMAGEBOX[2],TheMaker.IMAGEBOX[3]),Image.BICUBIC)
-        self.img.paste(new_image,box=(TheMaker.IMAGEBOX[0],TheMaker.IMAGEBOX[1]))
+        new_image = self.overlay.resize((TheMaker.IMAGEBOX[2],TheMaker.IMAGEBOX[3]),Image.BICUBIC).convert("RGBA")
+        self.img = self.img.convert("RGB")
+        self.img.paste(new_image,box=(TheMaker.IMAGEBOX[0],TheMaker.IMAGEBOX[1]),mask=new_image)
 
     def wordwrap(self,text):
         size = self.font.getsize(text)
