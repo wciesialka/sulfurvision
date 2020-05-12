@@ -52,7 +52,9 @@ class ImageSearch:
             r = requests.get(url=ImageSearch.URL,params=params)
             if r.status_code == 200:
                 data = r.json()
-
-                return data['items']
+                if 'items' in data.keys():
+                    return data['items']
+                else:
+                    raise RuntimeError('No image results found.')
             else:
                 raise UnsuccessfulRequest(r.status_code)
