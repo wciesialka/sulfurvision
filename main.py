@@ -94,10 +94,13 @@ def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
         raise TypeError(f"query should be type str, not type {type(query)}")
     img = None
     i = 0
+    stopNextRun = False
     while img == None and i < 5: # don't perform more than 5 searches
         n = (i*10) + 1
         try:
             results = searcher.search(query,start=n)
+            if len(results) < n+10:
+                stopNextRun = True
         except ImageSearch.UnsuccessfulRequest as ex:
             print("Error while retrieving image results:\n\t",ex)
             if(ex.status_code == 400):
@@ -114,6 +117,8 @@ def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
                     continue
                 else:
                     break
+            if stopNextRun and img == None:
+                raise ImageSearch.QueryError("Could not find valid image in less than fifty results.")
         i += 1
 
     if img == None:
