@@ -104,7 +104,7 @@ def wget_best_image(searcher:ImageSearch.ImageSearch, query:str):
                 print("Are your API Key and CX correct?")
             elif(ex.status_code == 429):
                 print("Your API Usage Quota has been met.")
-            exit()
+            raise ex
         else:
             for result in results: # loop through results and try to find a valid one
                 try:
