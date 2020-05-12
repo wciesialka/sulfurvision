@@ -3,7 +3,7 @@ import html, re, requests
 class UnsuccessfulRequest(Exception):
     def __init__(self,status_code:int):
         self.status_code = status_code
-        self.message = f"Invalid request: returned status code {self.status_code}"
+        self.message = f"Invalid request returned status code {self.status_code}"
     
     def __str__(self):
         return self.message
