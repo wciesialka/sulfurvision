@@ -2,6 +2,9 @@
 config/
 out/
 
+# other
+shittyreq.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

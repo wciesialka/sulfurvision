@@ -10,6 +10,8 @@ Generate an image of Barnacle Boy holding THE OBJECT
 * A Google account
 * A [Google Custom Search Engine](https://cse.google.com/cse/all)
 
+The Python modules required can be installed using `pip install -r requirements.txt` if the pip module is installed. Details on how to install pip can be found [on their website](https://pip.pypa.io/en/stable/installing/).
+
 
 ## About Google Custom Search Engine
 
