@@ -1,6 +1,6 @@
 ![](https://img.shields.io/badge/dynamic/json?color=success&label=Version&prefix=v&query=%24.version&url=https%3A%2F%2Fraw.githubusercontent.com%2Fwciesialka%2Fthe%2Fmaster%2Finfo.json) ![](https://img.shields.io/badge/dynamic/json?color=informational&label=Python&query=%24.python&url=https%3A%2F%2Fraw.githubusercontent.com%2Fwciesialka%2Fthe%2Fmaster%2Finfo.json)
 
-# the
+# Sulphur Vision
 Generate an image of Barnacle Boy holding THE OBJECT
 
 ## Prerequisites
@@ -41,4 +41,4 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 
 ## Authors
 
-* William Ciesialka
+* Willow Ciesialka
