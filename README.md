@@ -50,6 +50,10 @@ options:
 
 Note that query is a string and may require you to surround it in quotations, especially if it contains spaces.
 
+## Examples
+
+See a pre-generated example at [example.jpg](example.jpg).
+
 ## License
 
 This project is licensed under the The GNU General Public License v3.0 - see [LICENSE](LICENSE) for details.
