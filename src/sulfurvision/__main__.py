@@ -12,9 +12,17 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(description = "Generate a Sulfur Vision image.")
-    parser.add_argument('-o', '--output', type = argparse.FileType('wb'), help = "Output file.")
+    parser.add_argument('-o', '--output', required = True, type = argparse.FileType('wb'), help = "Output file.")
     parser.add_argument('query', help = 'Search query.', type = str)
     args = parser.parse_args()
+
+    search_result = image_search.search(args.query)
+
+    if search_result is None:
+        print("Could not find a result.")
+    else:
+        image = image_maker.make_image(search_result, args.query.upper())
+        image.save(args.output)
 
 if __name__=="__main__":
     main()

@@ -8,9 +8,10 @@
 # See the GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License along with sulfurvision. If not, see <https://www.gnu.org/licenses/>.
 
-import urllib
+import urllib.request
 import re
 import json
+from urllib.parse import urlencode
 from html import escape as htmlescape
 from os import getenv
 from typing import List
@@ -63,7 +64,7 @@ def find_results(query: str, start: int = 1) -> List[str] | None:
     elif len(query) == 0:
         raise ValueError('Query should not be empty.')
     else:
-        params = urllib.parse.urlencode(
+        params = urlencode(
             {'key': CS_KEY, "cx": CS_CX, "q": query, "searchType": 'image', "start": start}
         )
         url = f"https://www.googleapis.com/customsearch/v1?{params}"
@@ -71,7 +72,7 @@ def find_results(query: str, start: int = 1) -> List[str] | None:
         request.add_header('User-Agent', 'sulphurvision/2.0')
         with urllib.request.urlopen(request) as response:
             if response.getcode() == 200:
-                data = json.load(response.read())
+                data = json.load(response)
                 return data.get('items', None)
             else:
                 raise UnsuccessfulRequest(response.getcode(), str(response.read()))
@@ -94,12 +95,12 @@ def search(query: str) -> Image.Image | None:
         results = find_results(query, start = n)
         for result in results: # loop through results and try to find a valid one
             try:
-                url = result['link']
+                url = result.get('link')
                 request = urllib.request.Request(url)
                 request.add_header('User-Agent', 'sulphurvision/2.0')
                 with urllib.request.urlopen(request) as response:
-                    Image.open(response.read())
-            except:
+                    image = Image.open(response)
+            except Exception as exception:
                 continue
             else:
                 break
