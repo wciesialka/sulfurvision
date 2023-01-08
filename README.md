@@ -52,7 +52,7 @@ Note that query is a string and may require you to surround it in quotations, es
 
 ## Examples
 
-See a pre-generated example at [example.jpg](example.jpg).
+You can view a pre-generated example at [example.jpg](example.jpg).
 
 ## License
 
