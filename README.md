@@ -50,7 +50,7 @@ options:
 
 Note that query is a string and may require you to surround it in quotations, especially if it contains spaces.
 
-## Examples
+### Examples
 
 You can view a pre-generated example at [example.jpg](example.jpg).
 
