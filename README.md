@@ -5,7 +5,7 @@ Generate an image of Barnacle Boy using sulfur vision on a held object. This obj
 
 ### Installation
 
-The recommended way to install the most up-to-date version of this project is by cloning the respository and running setup.py install. This allows you to control which branch you install as well. This may not always guarantee a stable release, however.
+The recommended way to install the most up-to-date version of this project is by cloning the respository and running `python3 setup.py install`. This allows you to control which branch you install as well. This may not always guarantee a stable release, however.
 
 ### Prerequisites
 
@@ -26,7 +26,7 @@ Before using this tool, you must set two environment variables.
 * `GOOGLE_CS_CX` should be set to your Search Engine ID.
 * `GOOGLE_CS_KEY` should be set to your Custom Search JSON API Key.
 
-For more details, visit [Custom Search JSON API: Introduction](https://developers.google.com/custom-search/v1/introduction).
+For more details on the Google Custom Search API, visit [Custom Search JSON API: Introduction](https://developers.google.com/custom-search/v1/introduction). For more details on how to set environment variables, [this guide](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Environment_Variables.html) may prove helpful.
 
 ## Usage
 
