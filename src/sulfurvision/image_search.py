@@ -1,12 +1,13 @@
 '''Module responsible for searching for an image.'''
 
 # This file is part of sulfurvision.
-# sulfurvision is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, version 3 of the License.
-# sulfurvision is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-# See the GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License along with sulfurvision. If not, see <https://www.gnu.org/licenses/>.
+# sulfurvision is free software: you can redistribute it and/or modify it under the 
+# terms of the GNU General Public License as published by the Free Software Foundation, 
+# version 3 of the License. sulfurvision is distributed in the hope that it will be 
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+# details. You should have received a copy of the GNU General Public License along with
+# sulfurvision. If not, see <https://www.gnu.org/licenses/>.
 
 import urllib.request
 import re
@@ -23,7 +24,8 @@ class UnsuccessfulRequest(Exception):
     '''Exception representing an unsuccessful request.'''
 
     def __init__(self, status_code: int, response: str):
-        super().__init__(f"Invalid request returned status code {status_code}. Response:\n\t{response}")
+        super().__init__(f"Invalid request returned status code {status_code}.\
+            Response:\n\t{response}")
 
 def find_results(query: str, start: int = 1) -> List[str] | None:
     '''Function responsible for searching for and finding image URLs.
@@ -48,10 +50,14 @@ def find_results(query: str, start: int = 1) -> List[str] | None:
     if not isinstance(query, str):
         try:
             query = str(query)
-        except:
-            raise TypeError(f"query should be type 'str', not type '{query.__class__.__name__}'")
+        except Exception:
+            raise TypeError(
+                f"query should be type 'str', not type '{query.__class__.__name__}'"
+            )
     if not isinstance(start, int):
-        raise TypeError(f"start should be type 'int', not type '{start.__class__.__name__}'")
+        raise TypeError(
+            f"start should be type 'int', not type '{start.__class__.__name__}'"
+        )
     if start < 1:
         raise ValueError(f"start should be >= 1, not {start}")
     query = query.strip()
@@ -59,13 +65,17 @@ def find_results(query: str, start: int = 1) -> List[str] | None:
     query = WHITESPACE_REGEX.sub("+", query)
 
     if len(query) > 1840:
-        # 1840 is roughly the length a query before the total request url is over 2000 characters
-        raise ValueError("Query must be less than or equal to 1840 characters in length.")
+        # 1840 is the approximately the length a query can be before the 
+        # complete request url is over 2000 characters
+        raise ValueError(
+            "Query must be less than or equal to 1840 characters in length."
+        )
     elif len(query) == 0:
         raise ValueError('Query should not be empty.')
     else:
         params = urlencode(
-            {'key': CS_KEY, "cx": CS_CX, "q": query, "searchType": 'image', "start": start}
+            {'key': CS_KEY, "cx": CS_CX, "q": query,
+            "searchType": 'image', "start": start}
         )
         url = f"https://www.googleapis.com/customsearch/v1?{params}"
         request = urllib.request.Request(url)
@@ -100,7 +110,7 @@ def search(query: str) -> Image.Image | None:
                 request.add_header('User-Agent', 'sulphurvision/2.0')
                 with urllib.request.urlopen(request) as response:
                     image = Image.open(response)
-            except Exception as exception:
+            except Exception:
                 continue
             else:
                 break

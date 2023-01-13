@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sulfurvision"
+authors = [
+    {name = "Willow Ciesialka", email="wciesialka@gmail.com"}
+]
+requires-python = ">=3.11"
+description = "Create an image of Barnacle Boy holding an object."
+license = {text = "GPL-3.0"}
+keywords = [
+    "python",
+    "image"
+]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Topic :: Artistic Software",
+    "Operating System :: OS Independent"
+]
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+where = ["src"]  # ["."] by default
+include = ["sulfurvision*"]  # ["*"] by default
+
+[tool.setuptools.dynamic]
+version = {attr = "sulfurvision.__version__"}
+readme = {file = ["README.md"]}
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.package-data]
+"sulfurvision.data" = ["base.jpg", "impact.ttf"]
+
+[project.scripts]
+sulfurvision = "sulfurvision.__main__:main"

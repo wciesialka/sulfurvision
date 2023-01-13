@@ -1,11 +1,11 @@
-# Sulphur Vision
+# Sulfur Vision
 Generate an image of Barnacle Boy using sulfur vision on a held object. This object will be automatically obtained from Google Image results.
 
 ## Getting Started
 
 ### Installation
 
-The recommended way to install the most up-to-date version of this project is by cloning the respository and running setup.py install. This allows you to control which branch you install as well. This may not always guarantee a stable release, however.
+The recommended way to install the most up-to-date version of this project is by cloning the respository and running `python3 -m pip install -e .` in the repository directory. This allows you to control which branch you install as well. This may not always guarantee a stable release, however. Note that this requires the `pip` module, which should come with your installation of Python. If you do not have `pip`, details on how to install `pip` can be found [on their website](https://pip.pypa.io/en/stable/installing/). More in-depth details on how to install packages can be found [in the Python documentation](https://packaging.python.org/en/latest/tutorials/installing-packages/).
 
 ### Prerequisites
 
@@ -13,7 +13,7 @@ The recommended way to install the most up-to-date version of this project is by
 * A Google account
 * A [Google Custom Search Engine](https://cse.google.com/cse/all)
 
-Dependencies are listed in [requirements.txt](requirements.txt) and should be installed when running `setup.py`. If this fails, you can install dependencies using `python3 -m pip install requirements.txt` if the `pip` module is installed. Details on how to install `pip` can be found [on their website](https://pip.pypa.io/en/stable/installing/).
+Dependencies are listed in [requirements.txt](requirements.txt) and should be automatically installed during setup. If this fails, you can install dependencies using `python3 -m pip install -r requirements.txt` if the `pip` module is installed. 
 
 #### About Google Custom Search Engine
 
@@ -52,7 +52,7 @@ Note that query is a string and may require you to surround it in quotations, es
 
 ## Examples
 
-You can view a pre-generated example at [example.jpg](example.jpg).
+You can view a pre-generated example at [examples/lenna.jpg](examples/lenna.jpg).
 
 ## License
 
