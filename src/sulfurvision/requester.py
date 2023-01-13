@@ -45,7 +45,7 @@ class Requester:
         request.add_header('User-Agent', self.user_agent)
         try:
             response = urllib.request.urlopen(request)
-            self.__hosts[host] = current_time
+            self.__hosts[host] = perf_counter_ns()
             yield response
         except Exception as ex:
             raise ex
