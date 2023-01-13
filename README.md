@@ -5,7 +5,7 @@ Generate an image of Barnacle Boy using sulfur vision on a held object. This obj
 
 ### Installation
 
-The recommended way to install the most up-to-date version of this project is by cloning the respository and running `python3 -m pip install -e .` in the repository directory. This allows you to control which branch you install as well. This may not always guarantee a stable release, however. Note that this requires the `pip` module, which should come with your installation of Python. If you do not have `pip`, details on how to install `pip` can be found [on their website](https://pip.pypa.io/en/stable/installing/). More in-depth details on how to install packages can be found [in the Python documentation](https://packaging.python.org/en/latest/tutorials/installing-packages/).
+The recommended way to install the most up-to-date version of this project is by cloning the respository and running `python3 -m pip install -e .` in the repository directory. This allows you to control which branch you install as well. This may not always guarantee a stable release, however. Note that this requires the `pip` module, which should come with your installation of Python. If you do not have `pip`, details on how to install `pip` can be found [on their website](https://pip.pypa.io/en/stable/installation/). More in-depth details on how to install packages can be found [in the Python documentation](https://packaging.python.org/en/latest/tutorials/installing-packages/).
 
 ### Prerequisites
 
