@@ -12,7 +12,7 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-import pkg_resources
+from importlib.resources import files
 
 # boxes use format x, y, dx, dy
 TEXTBOX = (209, 9, 465, 111)
@@ -30,15 +30,17 @@ def make_image(image: Image.Image, text: str) -> Image.Image:
     '''
 
     # Get the base layer
-    layer_0_stream = pkg_resources.resource_stream(__name__, 'data/base.jpg')
-    base = Image.open(layer_0_stream).convert("RGB")
+    base_ref = files("sulfurvision.data").joinpath('base.jpg')
+    with base_ref.open('rb') as f:
+        base = Image.open(f).convert("RGB")
 
     # Overlay the second image
     overlay = image.resize((IMAGEBOX[2], IMAGEBOX[3]), Image.BICUBIC).convert("RGBA")
     base.paste(overlay, box = (IMAGEBOX[0], IMAGEBOX[1]), mask = overlay)
 
     # Get the correct font size
-    font_stream = pkg_resources.resource_stream(__name__, 'data/impact.ttf')
+    font_ref = files("sulfurvision.data").joinpath('impact.ttf')
+    font_stream = font_ref.open('rb')
 
     max_font_size = 121 # max size
     min_font_size = 36 # min size
@@ -103,5 +105,7 @@ def make_image(image: Image.Image, text: str) -> Image.Image:
         x = TEXTBOX[0] + (TEXTBOX[2] - w) / 2
         y = TEXTBOX[1] + (TEXTBOX[3] - h) / 2
         draw_text(x, y, text)
+
+    font_stream.close()
 
     return base

@@ -7,5 +7,5 @@
 # details. You should have received a copy of the GNU General Public License along with
 # sulfurvision. If not, see <https://www.gnu.org/licenses/>.
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 __author__ = "Willow Ciesialka"
