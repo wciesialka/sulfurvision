@@ -9,16 +9,18 @@
 # details. You should have received a copy of the GNU General Public License along with
 # sulfurvision. If not, see <https://www.gnu.org/licenses/>.
 
-import urllib.request
 import re
 import json
-from urllib.parse import urlencode
+
 from html import escape as htmlescape
 from os import getenv
 from typing import List
 from PIL import Image
+from sulfurvision.requester import Requester
+from importlib.metadata import version
 
 WHITESPACE_REGEX: re.Pattern = re.compile(r"\s+", re.MULTILINE)
+REQUESTER = Requester('/'.join(('sulfurvision', version('sulfurvision'))))
 
 class UnsuccessfulRequest(Exception):
     '''Exception representing an unsuccessful request.'''
@@ -73,14 +75,12 @@ def find_results(query: str, start: int = 1) -> List[str] | None:
     elif len(query) == 0:
         raise ValueError('Query should not be empty.')
     else:
-        params = urlencode(
-            {'key': CS_KEY, "cx": CS_CX, "q": query,
-            "searchType": 'image', "start": start}
-        )
-        url = f"https://www.googleapis.com/customsearch/v1?{params}"
-        request = urllib.request.Request(url)
-        request.add_header('User-Agent', 'sulphurvision/2.0')
-        with urllib.request.urlopen(request) as response:
+        params = {
+            'key': CS_KEY, "cx": CS_CX, "q": query,
+            "searchType": 'image', "start": start
+        }
+        url = "https://www.googleapis.com/customsearch/v1"
+        with REQUESTER.open(url, params) as response:
             if response.getcode() == 200:
                 data = json.load(response)
                 return data.get('items', None)
@@ -106,10 +106,9 @@ def search(query: str) -> Image.Image | None:
         for result in results: # loop through results and try to find a valid one
             try:
                 url = result.get('link')
-                request = urllib.request.Request(url)
-                request.add_header('User-Agent', 'sulphurvision/2.0')
-                with urllib.request.urlopen(request) as response:
-                    image = Image.open(response)
+                with REQUESTER.open(url) as response:
+                    if response.getcode() == 200:
+                        image = Image.open(response)
             except Exception:
                 continue
             else:
