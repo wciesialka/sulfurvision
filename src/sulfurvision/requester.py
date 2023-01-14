@@ -20,7 +20,7 @@ class Requester:
     # Request Delay in Milliseconds
     REQUEST_DELAY_MS: int = 100
     # Request Delay in Nanoseconds
-    REQUEST_DELAY: int = 1_000_000 * REQUEST_DELAY_MS
+    REQUEST_DELAY_NS: int = 1_000_000 * REQUEST_DELAY_MS
 
     def __init__(self, user_agent: str):
         self.__hosts: Dict[str, int] = {}
@@ -28,13 +28,13 @@ class Requester:
 
     @contextmanager
     def open(self, url: str, params: Dict[str, str] | None = None):
-        current_time = perf_counter_ns()
         host = urlparse(url).netloc
         if host in self.__hosts:
             last_call = self.__hosts[host]
-            time_diff = current_time - last_call
-            if time_diff < Requester.REQUEST_DELAY:
-                delay_ns = Requester.REQUEST_DELAY - time_diff
+            time_diff = perf_counter_ns() - last_call
+            print(f"Time Diff between present and last call for {host}: {time_diff} ns")
+            if time_diff < Requester.REQUEST_DELAY_NS:
+                delay_ns = Requester.REQUEST_DELAY_NS - time_diff
                 # Must divide by 1e+9 to account for ns -> secs
                 sleep(delay_ns / 1e+9)
         
@@ -49,7 +49,5 @@ class Requester:
             yield response
         except Exception as ex:
             raise ex
-        else:
-            self.__hosts[host] = current_time
         finally:
             response.close()
