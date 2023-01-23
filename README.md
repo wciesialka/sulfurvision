@@ -53,6 +53,7 @@ Note that query is a string and may require you to surround it in quotations, es
 ## Examples
 
 You can view a pre-generated example at [examples/lenna.jpg](examples/lenna.jpg).
+![Example Output](examples/lenna.jpg)
 
 ## License
 
