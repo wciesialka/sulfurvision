@@ -15,12 +15,14 @@ import json
 from html import escape as htmlescape
 from os import getenv
 from typing import List
-from PIL import Image
-from sulfurvision.requester import Requester
 from importlib.metadata import version
+import urllib.error
+from PIL import Image
+from . import request_limiter
 
 WHITESPACE_REGEX: re.Pattern = re.compile(r"\s+", re.MULTILINE)
-REQUESTER = Requester('/'.join(('sulfurvision', version('sulfurvision'))))
+user_agent: str = '/'.join(('sulfurvision', version('sulfurvision')))
+REQUESTER = request_limiter.Requester(user_agent)
 
 class UnsuccessfulRequest(Exception):
     '''Exception representing an unsuccessful request.'''
@@ -28,6 +30,12 @@ class UnsuccessfulRequest(Exception):
     def __init__(self, status_code: int, response: str):
         super().__init__(f"Invalid request returned status code {status_code}.\
             Response:\n\t{response}")
+
+class MissingEnvironmentVariable(Exception):
+    """Derived exception for an unconfigured environment."""
+
+    def __init__(self, variable: str):
+        super().__init__(f"Required environment variable \"{variable}\" is missing.")
 
 def find_results(query: str, start: int = 1) -> List[str] | None:
     '''Function responsible for searching for and finding image URLs.
@@ -46,22 +54,24 @@ def find_results(query: str, start: int = 1) -> List[str] | None:
     :rtype: list[str] | None
     '''
 
-    CS_KEY: str = getenv('GOOGLE_CS_KEY')
-    CS_CX: str = getenv('GOOGLE_CS_CX')
+    cs_key: str = getenv('GOOGLE_CS_KEY')
+    cs_cx: str = getenv('GOOGLE_CS_CX')
+
+    if not cs_key:
+        raise MissingEnvironmentVariable("GOOGLE_CS_KEY")
+
+    if not cs_cx:
+        raise MissingEnvironmentVariable("GOOGLE_CS_CX")
 
     if not isinstance(query, str):
-        try:
-            query = str(query)
-        except Exception:
-            raise TypeError(
-                f"query should be type 'str', not type '{query.__class__.__name__}'"
-            )
+        query = str(query)
     if not isinstance(start, int):
         raise TypeError(
             f"start should be type 'int', not type '{start.__class__.__name__}'"
         )
     if start < 1:
         raise ValueError(f"start should be >= 1, not {start}")
+
     query = query.strip()
     query = htmlescape(query)
     query = WHITESPACE_REGEX.sub("+", query)
@@ -72,20 +82,18 @@ def find_results(query: str, start: int = 1) -> List[str] | None:
         raise ValueError(
             "Query must be less than or equal to 1840 characters in length."
         )
-    elif len(query) == 0:
+    if len(query) == 0:
         raise ValueError('Query should not be empty.')
-    else:
-        params = {
-            'key': CS_KEY, "cx": CS_CX, "q": query,
-            "searchType": 'image', "start": start
-        }
-        url = "https://www.googleapis.com/customsearch/v1"
-        with REQUESTER.open(url, params) as response:
-            if response.getcode() == 200:
-                data = json.load(response)
-                return data.get('items', None)
-            else:
-                raise UnsuccessfulRequest(response.getcode(), str(response.read()))
+    params = {
+        'key': cs_key, "cx": cs_cx, "q": query,
+        "searchType": 'image', "start": start
+    }
+    url = "https://www.googleapis.com/customsearch/v1"
+    with REQUESTER.open(url, params) as response:
+        if response.getcode() == 200:
+            data = json.load(response)
+            return data.get('items', None)
+        raise UnsuccessfulRequest(response.getcode(), str(response.read()))
 
 MAX_SEARCHES: int = 5
 RESULTS_PER_SEARCH: int = 10
@@ -101,20 +109,20 @@ def search(query: str) -> Image.Image | None:
     image = None
     i = 0
     while image is None and i < MAX_SEARCHES:
-        n = (i * RESULTS_PER_SEARCH) + 1
-        results = find_results(query, start = n)
+        start = (i * RESULTS_PER_SEARCH) + 1
+        results = find_results(query, start=start)
         for result in results: # loop through results and try to find a valid one
             try:
                 url = result.get('link')
                 with REQUESTER.open(url) as response:
                     if response.getcode() == 200:
                         image = Image.open(response)
-            except Exception:
+            except urllib.error.URLError:
                 continue
             else:
                 break
         i += 1
-        if len(results) < n + 10:
+        if len(results) < start + 10:
             break
 
     return image
