@@ -9,10 +9,10 @@
 # details. You should have received a copy of the GNU General Public License along with
 # sulfurvision. If not, see <https://www.gnu.org/licenses/>.
 
+from importlib.resources import files
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-import pkg_resources
 
 # boxes use format x, y, dx, dy
 TEXTBOX = (209, 9, 465, 111)
@@ -30,78 +30,87 @@ def make_image(image: Image.Image, text: str) -> Image.Image:
     '''
 
     # Get the base layer
-    layer_0_stream = pkg_resources.resource_stream(__name__, 'data/base.jpg')
-    base = Image.open(layer_0_stream).convert("RGB")
+    base_ref = files("sulfurvision.data").joinpath('base.jpg')
+    with base_ref.open('rb') as base_file:
+        base = Image.open(base_file).convert("RGB")
 
     # Overlay the second image
     overlay = image.resize((IMAGEBOX[2], IMAGEBOX[3]), Image.BICUBIC).convert("RGBA")
-    base.paste(overlay, box = (IMAGEBOX[0], IMAGEBOX[1]), mask = overlay)
+    base.paste(overlay, box=(IMAGEBOX[0], IMAGEBOX[1]), mask=overlay)
 
     # Get the correct font size
-    font_stream = pkg_resources.resource_stream(__name__, 'data/impact.ttf')
+    font_ref = files("sulfurvision.data").joinpath('impact.ttf')
+    font_stream = font_ref.open('rb')
 
     max_font_size = 121 # max size
     min_font_size = 36 # min size
     font_size = max_font_size + 1
     size = None
-    w = 0xFFFFFFFF
-    h = 0
+    width = 0xFFFFFFFF
+    height = 0
 
     font = None
 
-    while (font_size > min_font_size) and (w > TEXTBOX[2]):
+    while (font_size > min_font_size) and (width > TEXTBOX[2]):
         font_size -= 1
         font = ImageFont.truetype(font_stream, font_size)
         size = font.getsize(text)
-        w = size[0]
-        h = size[1]
+        width = size[0]
+        height = size[1]
         font_stream.seek(0)
 
-    def wordwrap(_text: str):
+    def __wordwrap(_text: str):
         size = font.getsize(_text)
-        w = size[0]
-        if(w <= TEXTBOX[2]):
+        width = size[0]
+        # If the width of the text is less than the size of the textbox
+        # then we can return a list with the text as the only element.
+        if width <= TEXTBOX[2]:
             return [_text.strip()]
-        else:
-            # find where the string becomes too long
-            temp = _text
-            i = len(temp)-1
-            while(w > TEXTBOX[2]):
-                i -= 1
-                temp = temp[:i]
-                size = font.getsize(temp)
-                w = size[0]
-            space = _text.rfind(" ", 0, i)
-            if space != -1:
-                i = space
-            split = (_text[:i], _text[i:])
-            return [split[0].strip(), *wordwrap(split[1].strip())]
+        # Find the right bound of where the string becomes too long
+        temp = _text
+        bound = len(temp)-1
+        while width > TEXTBOX[2]:
+            bound -= 1
+            temp = temp[:bound]
+            size = font.getsize(temp)
+            width = size[0]
+        # Try to find if there was a space before the right bound
+        # that would be easier to split at.
+        space = _text.rfind(" ", 0, bound)
+        if space != -1:
+            bound = space
+        split = (_text[:bound], _text[bound:])
+        return [split[0].strip(), *__wordwrap(split[1].strip())]
 
-    wrapped_text = wordwrap(text)
+    wrapped_text = __wordwrap(text)
 
-    def draw_text(x: int, y: int, _text: str):
+    def __draw_text(x: int, y: int, _text: str):
         draw = ImageDraw.Draw(base)
         border_size = max(1, font.size // 12)
         for i in range(1, border_size):
-            draw.text((x-i, y),   _text, font = font, fill="black")
-            draw.text((x+i, y),   _text, font = font, fill="black")
-            draw.text((x, y+i),   _text, font = font, fill="black")
-            draw.text((x, y-i),   _text, font = font, fill="black")
-            draw.text((x-i, y-i), _text, font = font, fill="black")
-            draw.text((x+i, y-i), _text, font = font, fill="black")
-            draw.text((x-i, y+i), _text, font = font, fill="black")
-            draw.text((x+i, y+i), _text, font = font, fill="black")
-            draw.text((x,   y),   _text, font = font, fill="white")
+            # Draw the border first
+            draw.text((x-i, y), _text, font=font, fill="black")
+            draw.text((x+i, y), _text, font=font, fill="black")
+            draw.text((x, y+i), _text, font=font, fill="black")
+            draw.text((x, y-i), _text, font=font, fill="black")
+            draw.text((x-i, y-i), _text, font=font, fill="black")
+            draw.text((x+i, y-i), _text, font=font, fill="black")
+            draw.text((x-i, y+i), _text, font=font, fill="black")
+            draw.text((x+i, y+i), _text, font=font, fill="black")
+            # Draw the text on top of the border
+            draw.text((x, y), _text, font=font, fill="white")
 
     if len(wrapped_text) > 1:
         for i, segment in enumerate(wrapped_text):
             seg_size = font.getsize(segment)
             x = TEXTBOX[0] + (TEXTBOX[2] - seg_size[0]) / 2
             y = TEXTBOX[1]
-            draw_text(x, y + (h * i), segment)
+            __draw_text(x, y + (height * i), segment)
     else:
-        x = TEXTBOX[0] + (TEXTBOX[2] - w) / 2
-        y = TEXTBOX[1] + (TEXTBOX[3] - h) / 2
-        draw_text(x, y, text)
+        x = TEXTBOX[0] + (TEXTBOX[2] - width) / 2
+        y = TEXTBOX[1] + (TEXTBOX[3] - height) / 2
+        __draw_text(x, y, text)
+
+    font_stream.close()
 
     return base
